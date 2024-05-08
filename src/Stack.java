@@ -1,28 +1,25 @@
-import java.util.NoSuchElementException;
-
+/**
+ * Creates a new Stack object - A list with a FILO order structure.
+ */
 public class Stack {
     /**
-     * Enables/disables debugging messages for developer testing - designed only to be toggled via hard coding.
+     * The Node class - Used to construct a Node object which stores the value of each
+     * element in the stack as well as the Node object that it is pointing to (next element).
      */
-    final boolean debugging = false;
-    /**
-     * The first node in this list
-     */
-    Node head;
-
     public static class Node {
 
         /**
          * The string value that this node holds
          */
         private String value;
+
         /**
          * The node that this node is pointing to
          */
         private Node next;
 
         /**
-         * Constructs a new node that stores a string and points to another null
+         * Constructs a new node using the passed String as its value.
          */
         public Node(String str) {
             value = str;
@@ -43,6 +40,16 @@ public class Stack {
     } // end class
 
     /**
+     * Enables/disables debugging messages for developer testing - designed only to be toggled via hard coding.
+     */
+    final boolean debugging = true;
+
+    /**
+     * The first node in this list
+     */
+    Node head;
+
+    /**
      * Constructs a new stack that takes store string values
      */
     public Stack() {
@@ -51,106 +58,82 @@ public class Stack {
     } // end constructor
 
     /**
-     * Adds the passed item onto the top of the stack
+     * Adds the passed item to the top of the stack
+     * @param str The String value being added to the top of the stack
      */
     public void push(String str) {
+        // ensures the passed string is not empty
         if (str.trim().isEmpty()) {
-            System.out.println("Error pushing value onto stack, string was empty");
+            System.out.println("Error pushing value onto stack, passed string was empty!");
             return;
 
         } // end if
 
-        if (head == null)
-            head = new Node(str);
-        else head.value = str;
+        // stores the existing head before overwriting it
+        Node oldHead = head;
+        // creates a node using the passed value to replace the existing head
+        head = new Node(str.trim());
+        // attaches the existing stack to the new head
+        head.next = oldHead;
+
+        debug("Successfully pushed value \"" + str + "\" onto the stack!");
 
     } // end void
-
-
-//    /**
-//     * Creates a new node with the passed string value and adds it to the head of this list
-//     * @param string The value to add to the head of this list
-//     */
-//    public void add(String string){
-//        Node newNode = new Node(string.trim());
-//
-//        // if the head is not null, attaches it to the new node
-//        if (head != null)
-//            newNode.next = head;
-//
-//        head = newNode;
-//
-//        debug("Successfully added \"" + string + "\" to the head of this list");
-//
-//    } // end void
-//
-//    /**
-//     * Takes an integer value, converts it to a string value and adds it to the head of this list
-//     * @param value The integer value to be converted and added to this list
-//     */
-//    public void add(int value){
-//        add(String.valueOf(value));
-//
-//    } // end void
 
     /**
-     * Removes the first item from the top of the stack
+     * ~ METHOD NOT DESIGNED FOR ASSESSMENT ~
+     *
+     * Adds an array of String values to this stack. Each element of the array will be added to the top of the stack, starting with the 0th item in the array.
+     * @param strArray The array of Strings to add to this stack
      */
-    public void pop() {
+    void push(String[] strArray) {
+        if (strArray.length == 0) {
+            debug("Unable to add array of values, the passed array was empty!");
+            return;
 
+        } // end if
+
+        for (String str : strArray)
+            push(str);
+
+        debug("Successfully added " + strArray.length + " items to the stack!");
 
     } // end void
 
-//    /**
-//     * Removes the node containing the first found occurrence of the passed string value from this list
-//     * @param string The string value to remove the list
-//     */
-//    public void remove(String string){
-//        try {
-//            if (isEmpty())
-//                throw new IllegalArgumentException("Failed to remove value \"" + string + "\", list is empty!");
-//            if (!hasValue(string))
-//                throw new NoSuchElementException("Failed to remove value \"" + string + "\", value not found!");
-//
-//            debug("Removing value \"" + string + "\" from the StrLinkedList ...");
-//
-//            // cuts head off if value is contained in the head
-//            if (head.value.equals(string)) {
-//                head = head.next;
-//                debug(this.toString());
-//                return;
-//
-//            } // end if
-//
-//            Node previous = head;
-//            Node current = head.next;
-//
-//            // iterates through the list until the value is found, then removes it
-//            while(current != null){
-//                if(current.value.equals(string)) {
-//                    previous.next = current.next;
-//                    debug(this.toString());
-//                    return;
-//
-//                } // end if
-//
-//                // moves both pointers to the next nodes
-//                previous = current;
-//                current = current.next;
-//
-//            } // end while
-//
-//        }  catch (Exception e){
-//            e.printStackTrace();
-//
-//        } // end try
-//
-//    } // end void
+    /**
+     * Removes and returns the item at the top of the stack
+     * @return The first item in the list as a String
+     */
+    public String pop() {
+        // ensures there is a value at the head of the stack before popping it
+        if (head == null) {
+            debug("Unable to pop values from an empty list!");
+            return null;
+
+        } // end if
+
+        // stores the value that is being popped
+        String value = head.value;
+        // replaces the first value in the stack with its next value (if any exists)
+        head = (head.next == null ? null : head.next);
+
+        debug("Successfully popped value \"" + value + "\" off the top of the stack");
+        return value;
+
+    } // end void
 
     /**
      * Returns the value of the first item in the list
+     * @return A String value replicating that of the first item in the list
      */
     public String peek() {
+        if (head == null) {
+            debug("Unable to peek at an empty list!");
+            return null;
+
+        } // end if
+
+        debug("Successfully peeked at value \"" + head.value + "\" on the top of the stack!");
         return head.value;
 
     } // end void
@@ -166,7 +149,7 @@ public class Stack {
     } // end boolean
 
     /**
-     * Gets the length of this list
+     * Returns the length of this list
      * @return An integer value denoting the length of this list (i.e., the number of nodes/elements)
      */
     public int length() {
@@ -174,8 +157,9 @@ public class Stack {
         int length = 0;
 
         // iterates through the list and counts each node/element to determine the length of this list
-        while (current != null){
+        while (current != null) {
             length++;
+            // moves to next node
             current = current.next;
 
         } // end while
@@ -184,48 +168,59 @@ public class Stack {
 
     } // end int
 
-    public void dump() {
-
-
-    } // end void
-
     /**
-     * Constructs a string out of each node in this list
-     * @return A string value containing the nodes value and the node that it is pointing to
+     * Prints the content of this stack to standard output. If the list is empty, "null" will be printed instead.
+     * @return The content of this stack as String values with arrows denoting their pointers
      */
-    @Override
-    public String toString(){
-        StringBuilder stringBuilder = new StringBuilder();
+    public String dump() {
+        debug("Attempting to print stack...");
 
-        if (!isEmpty()){
+        if (head != null) {
             Node current = head;
+            // defines a string builder to store stack contents
+            StringBuilder list = new StringBuilder();
 
-            // constructs a string out of each element in this linked list
-            while (current != null){
-                stringBuilder.append(current.value).append(" -> ");
+            // iterates through each node in the stack
+            while (current != null) {
+                // uses the string builder to append the current value with a pointer symbol
+                list.append(current.value).append(" -> ");
+                // sets current node to the node its pointing at
                 current = current.next;
 
             } // end while
 
-        } // end if
+            // prints the stacks content to the console
+            System.out.println(list);
+            return list.toString();
 
-        stringBuilder.append("null");
-        return stringBuilder.toString();
+        } else {
+            // if the list is empty, prints "null" to the console
+            System.out.println("null");
+            return null;
 
-    } // end string
-
-    /**
-     * Prints the string value of each node, followed by a pointer to
-     * it's next node (->) in the order that they appear in the list
-     */
-    public void print(){
-        System.out.println(this);
+        }// end if
 
     } // end void
 
-    public void debug(String msg){
+    /**
+     * ~ METHOD NOT DESIGNED FOR ASSESSMENT ~
+     *
+     * Prints a debug message if debugging mode is enabled (for developer use only)
+     * @param msg The debug message to print to the console
+     */
+    void debug(String msg){
         if (debugging)
             System.out.println(msg);
+
+    } // end void
+
+    /**
+     * ~ METHOD NOT DESIGNED FOR ASSESSMENT ~
+     *
+     * Prints an empty line to the console if debugging mode is enabled (for developer use only)
+     */
+    void debug() {
+        debug("");
 
     } // end void
 
